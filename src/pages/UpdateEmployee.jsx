@@ -48,7 +48,7 @@ const UpdateEmployee = () => {
       );
       alert("Data has been updated successfully");
     } catch (error) {
-      alert("Failed to update your data");
+      alert("Link expired. Data already updated");
     }
   };
 
