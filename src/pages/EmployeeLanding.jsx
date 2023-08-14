@@ -48,7 +48,7 @@ const EmployeeLanding = () => {
           w={{ base: "100%", md: "26%" }}
           bg={"#0B162E"}
           color="white"
-          minH="100vh"
+          minH={{ base:"fit-content", lg:"100vh"}}
           mt={"60px"}
         >
           <VStack spacing="2" align="stretch">
