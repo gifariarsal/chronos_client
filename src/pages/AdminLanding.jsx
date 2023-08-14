@@ -1,5 +1,8 @@
+import { Box } from '@chakra-ui/react';
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import EmployeeManagement from '../components/admin/EmployeeManagement';
 
 function withAuth(Component) {
   return function WrappedComponent(props) {
@@ -22,8 +25,13 @@ function withAuth(Component) {
 
 const AdminLanding = () => {
   return (
-    <div>AdminLanding</div>
-  )
+    <Box>
+      <Navbar />
+        <Box w={"full"} pt={"60px"}>
+          <EmployeeManagement />
+        </Box>
+    </Box>
+  );
 }
 
 export default withAuth(AdminLanding);

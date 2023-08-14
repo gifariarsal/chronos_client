@@ -14,18 +14,20 @@ import {
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { loginSuccess } from "../redux/reducer/AuthReducer";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 // import ForgotPasswordModal from "../components/ForgotPasswordModal";
 import MainButton from "../components/buttons/MainButton";
+import { loginSuccess } from "../redux/reducer/AuthReducer";
+import jwtDecode from "jwt-decode";
 
 const Login = () => {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+  const [userId, setUserId] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -39,17 +41,18 @@ const Login = () => {
 
   const login = async (values) => {
     try {
-      const res = await axios.post("http://localhost:8000/api/auth/", {
+      const res = await axios.post("http://localhost:8000/api/auth", {
         email: values.email,
         password: values.password,
       });
+      const userID = res.data.user.id;
       console.log(res);
       if (res.status === 200) {
         dispatch(loginSuccess(res.data.token));
         if (res.data.user.roleID === 1) {
           navigate("/landing/admin");
         } else if (res.data.user.roleID === 2 || res.data.user.roleID === 3) {
-          navigate("/landing/employee");
+          navigate(`/landing/employee/${userID}`);
         }
       }
     } catch (err) {
@@ -102,6 +105,7 @@ const Login = () => {
           <Box w={"full"}>
             <form onSubmit={formik.handleSubmit}>
               <FormControl
+                isRequired
                 isInvalid={formik.touched.email && formik.errors.email}
               >
                 <FormLabel htmlFor="email">Email</FormLabel>
@@ -118,25 +122,11 @@ const Login = () => {
                 )}
               </FormControl>
               <FormControl
+                isRequired
                 isInvalid={formik.touched.password && formik.errors.password}
               >
                 <FormLabel htmlFor="password" mt={"4"}>
-                  <Flex
-                    alignItems={"baseline"}
-                    justifyContent={"space-between"}
-                  >
-                    Password
-                    <Button variant={"link"} onClick={onForgot}>
-                      <Text
-                        fontSize={"xs"}
-                        fontWeight={400}
-                        color={"blue"}
-                        _hover={{ textDecoration: "underline" }}
-                      >
-                        Forgot Password?
-                      </Text>
-                    </Button>
-                  </Flex>
+                  Password
                 </FormLabel>
                 <InputGroup>
                   <Input
