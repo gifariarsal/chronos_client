@@ -9,19 +9,26 @@ import {
   InputRightElement,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
-import axios from "axios";
 import * as Yup from "yup";
-import React from "react";
+import React, { useState } from "react";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import MainButton from "../components/buttons/MainButton";
+import { useDispatch } from "react-redux";
+import { updateEmployee } from "../redux/reducer/EmployeeReducer";
 
 const UpdateEmployee = () => {
   const url = window.location.href.split("/");
   const token = url[url.length - 1];
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const toast = useToast();
+  const [loading, setLoading] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const handleClickNew = () => setShowNew(!showNew);
 
   const validationSchema = Yup.object().shape({
     fullname: Yup.string().required("Username is required"),
@@ -35,23 +42,6 @@ const UpdateEmployee = () => {
       .required("Password is required"),
   });
 
-  const update = async (values) => {
-    try {
-      const res = await axios.patch(
-        "http://localhost:8000/api/auth/register",
-        values,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      alert("Data has been updated successfully");
-    } catch (error) {
-      alert("Link expired. Data already updated");
-    }
-  };
-
   const formik = useFormik({
     initialValues: {
       fullname: "",
@@ -60,14 +50,12 @@ const UpdateEmployee = () => {
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      update(values);
-      navigate("/");
+    onSubmit: async (values) => {
+      setLoading(true);
+      await dispatch(updateEmployee(values, token, toast, navigate));
+      setLoading(false);
     },
   });
-
-  const [showNew, setShowNew] = React.useState(false);
-  const handleClickNew = () => setShowNew(!showNew);
 
   return (
     <Box
@@ -76,7 +64,11 @@ const UpdateEmployee = () => {
       alignItems={"center"}
       h={"100vh"}
     >
-      <Box boxShadow={"lg"} rounded={"2xl"} w={"40vw"}>
+      <Box
+        boxShadow={"lg"}
+        rounded={"2xl"}
+        w={{ base: "80vw", md: "60vw", lg: "40vw" }}
+      >
         <form onSubmit={formik.handleSubmit}>
           <VStack px={10} py={10} w={"full"}>
             <Text fontSize={"xl"} fontWeight={700}>
@@ -165,12 +157,10 @@ const UpdateEmployee = () => {
                 </InputRightElement>
               </InputGroup>
               {formik.touched.password && formik.errors.password && (
-                <FormErrorMessage>
-                  {formik.errors.password}
-                </FormErrorMessage>
+                <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
               )}
             </FormControl>
-            <MainButton content="Save Data" />
+            <MainButton content="Save Data" loading={loading} />
           </VStack>
         </form>
       </Box>

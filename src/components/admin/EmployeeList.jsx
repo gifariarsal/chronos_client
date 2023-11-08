@@ -8,26 +8,16 @@ import {
   Tr,
   Th,
   Td,
-  Text,
 } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { getEmployee } from "../../redux/reducer/EmployeeReducer";
 
 const EmployeeList = () => {
-  const [users, setUsers] = useState([]);
+  const dispatch = useDispatch();
+  const { employee } = useSelector((state) => state.EmployeeReducer);
 
   useEffect(() => {
-    const fetchAllUsers = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/auth");
-        const sortedUsers = response.data.users.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-        setUsers(sortedUsers);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    fetchAllUsers();
+    dispatch(getEmployee());
   }, []);
 
   const getRoleName = (roleID) => {
@@ -52,8 +42,6 @@ const EmployeeList = () => {
     });
   };
 
-  const filteredUsers = users.filter((user) => user.roleID !== 1);
-
   return (
     <Box flex="1">
       <Table variant="striped" colorScheme="orange" fontSize={"sm"}>
@@ -69,7 +57,7 @@ const EmployeeList = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {filteredUsers.map((user) => (
+          {employee.map((user) => (
             <Tr key={user.id}>
               <Td>{user.fullName}</Td>
               <Td>{user.email}</Td>

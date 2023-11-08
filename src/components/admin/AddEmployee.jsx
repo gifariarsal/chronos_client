@@ -14,14 +14,19 @@ import {
   Radio,
   RadioGroup,
   Text,
+  useToast,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
-import axios from "axios";
 import MainButton from "../buttons/MainButton";
 import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
+import { addEmployee, getEmployee } from "../../redux/reducer/EmployeeReducer";
 
 const AddEmployee = ({ isOpen, onClose }) => {
+  const toast = useToast();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -42,48 +47,32 @@ const AddEmployee = ({ isOpen, onClose }) => {
       ),
   });
 
-  const addEmployee = async (values) => {
-    try {
-      await axios.post("http://localhost:8000/api/auth/register", {
-        email: values.email,
-        roleID: values.roleID,
-        baseSalary: values.baseSalary,
-        daySalary: values.daySalary
-      });
-      alert("Employee created successfully");
-    } catch (err) {
-      alert("Failed to create employee");
-    }
-  };
-
   const formik = useFormik({
     initialValues: {
       email: "",
       roleID: "",
       baseSalary: "",
-      daySalary: ""
+      daySalary: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values, { resetForm }) => {
-      addEmployee(values);
-      onClose();
-      resetForm();
+    onSubmit: async (values, { resetForm }) => {
+      await dispatch(addEmployee(values, setLoading, toast, onClose, resetForm));
+      await dispatch(getEmployee());
     },
   });
 
   const calculateDaySalary = (baseSalary) => {
     if (baseSalary) {
       const numericBaseSalary = parseFloat(baseSalary.replace(/\$|,/g, ""));
-      const calculatedDaySalary = (numericBaseSalary / 20).toFixed(0); // Menggunakan toFixed(0) untuk menghasilkan angka tanpa desimal
+      const calculatedDaySalary = (numericBaseSalary / 20).toFixed(0);
       return calculatedDaySalary;
     }
     return "";
   };
 
-  // Fungsi untuk mengupdate daySalary saat baseSalary berubah
   const handleBaseSalaryChange = (e) => {
     const { value } = e.target;
-    formik.handleChange(e); // Panggil handleChange formik untuk update input baseSalary
+    formik.handleChange(e);
     const calculatedDaySalary = calculateDaySalary(value);
     formik.setFieldValue("daySalary", calculatedDaySalary);
   };
@@ -157,6 +146,7 @@ const AddEmployee = ({ isOpen, onClose }) => {
               )}
             </FormControl>
             <FormControl
+              display={"none"}
               isRequired
               isInvalid={formik.touched.daySalary && formik.errors.daySalary}
             >
@@ -176,7 +166,7 @@ const AddEmployee = ({ isOpen, onClose }) => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <MainButton content="Create Employee" />
+            <MainButton content="Create Employee" loading={loading} />
           </ModalFooter>
         </form>
       </ModalContent>

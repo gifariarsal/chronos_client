@@ -12,6 +12,7 @@ const MainButton = (props) => {
       rounded={"lg"}
       color={"white"}
       bgColor={"#14213D"}
+      isLoading={props.loading}
       _hover={{ bgColor: "#253559" }}
       _active={{ bgColor: "#0B162E" }}
     >

@@ -1,7 +1,7 @@
 import React from 'react'
 import AddEmployee from './AddEmployee';
 import { IoAddOutline } from 'react-icons/io5';
-import { Box, Button, Table, Tbody, Text, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Text, useDisclosure } from '@chakra-ui/react';
 import EmployeeList from './EmployeeList';
 
 const EmployeeManagement = () => {
@@ -46,7 +46,7 @@ const EmployeeManagement = () => {
           </Button>
         </Box>
       </Box>
-      <Box w={"full"}>
+      <Box w={"full"} overflowX={"auto"}>
         <EmployeeList />
       </Box>
       <AddEmployee isOpen={isOpen} onOpen={onOpen} onClose={onClose} />

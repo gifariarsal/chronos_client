@@ -1,16 +1,28 @@
-import { Box, Button, Flex, Image } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, useToast } from "@chakra-ui/react";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logoutSuccess } from "../redux/reducer/AuthReducer";
+import Swal from "sweetalert2";
 import Logo from "../assets/logo_chronos.png";
+import { logout } from "../redux/reducer/AuthReducer";
 
 const Navbar = () => {
+  const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleLogout = () => {
-    dispatch(logoutSuccess(localStorage.token));
-    navigate("/");
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: "Warning",
+      text: "Are you sure to logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, logout!",
+    });
+    if (result.isConfirmed) {
+      dispatch(logout(toast, navigate));
+    }
   };
 
   return (

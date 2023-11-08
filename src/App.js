@@ -4,16 +4,19 @@ import Login from "./pages/Login";
 import AdminLanding from "./pages/AdminLanding";
 import EmployeeLanding from "./pages/EmployeeLanding";
 import UpdateEmployee from "./pages/UpdateEmployee";
+import KeepLogin from "./middleware/KeepLogin";
 
 function App() {
   return (
     <div className="App">
-      <Routes>
-        <Route path="/" element={<Login />}></Route>
-        <Route path="/landing/admin" element={<AdminLanding />}></Route>
-        <Route path="/landing/employee/:userID" element={<EmployeeLanding />}></Route>
-        <Route path="/register/:token" element={<UpdateEmployee />}></Route>
-      </Routes>
+      <KeepLogin>
+        <Routes>
+          <Route path="/" element={<Login />}></Route>
+          <Route path="/admin" element={<AdminLanding />}></Route>
+          <Route path="/employee" element={<EmployeeLanding />}></Route>
+          <Route path="/register/:token" element={<UpdateEmployee />}></Route>
+        </Routes>
+      </KeepLogin>
     </div>
   );
 }
