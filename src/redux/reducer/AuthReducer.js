@@ -20,11 +20,11 @@ export const AuthReducer = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const { id, fullname, email, username, birthday, roleID, baseSalary } =
+      const { id, fullName, email, username, birthday, roleID, baseSalary } =
         action.payload;
       state.user = {
         id,
-        fullname,
+        fullName,
         email,
         username,
         birthday,
@@ -92,13 +92,15 @@ export const logout = (toast, navigate) => {
     try {
       localStorage.removeItem("token");
       dispatch(logoutSuccess());
-      navigate("/");
       toast({
         title: "Logout Success",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        navigate("/");
+      }, 1000)
     } catch (error) {
       console.log(error);
     }

@@ -63,6 +63,7 @@ const UpdateEmployee = () => {
       justifyContent={"center"}
       alignItems={"center"}
       h={"100vh"}
+      bg={"#F1FAFF"}
     >
       <Box
         boxShadow={"lg"}

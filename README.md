@@ -1,70 +1,46 @@
-# Getting Started with Create React App
+# Chronos Attendance System Web Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Chronos Attendance System Web Application** is a web-based attendance system developed using React.js and Chakra UI. This repository contains the client-side code, while the server-side code can be found at [this link](https://github.com/gifariarsal/chronos_server). The application uses MySQL as its database.
 
-## Available Scripts
+## How to Use
 
-In the project directory, you can run:
+Here are the steps to use this code:
 
-### `npm start`
+### Prerequisites
+Make sure you have Node.js and npm (Node Package Manager) installed on your system before proceeding.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Step 1: Clone the Repository
+Clone this repository to your local system by running the following command in your terminal or command prompt:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+git clone https://github.com/gifariarsal/chronos_client.git
+```
 
-### `npm test`
+### Step 2: Install Dependencies
+Navigate to the newly created repository directory and install all the dependencies by running the following command:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+cd chronos_client
+npm install
+```
 
-### `npm run build`
+Step 3: Set Up Communication with the Server
+The client-side application communicates with the server-side application through API endpoints provided by the server. Ensure that the server-side application (located at Chronos Server repository) is properly set up and running, so the client-side application can interact with it seamlessly.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+For any database-related configurations or manipulations, please refer to the server-side documentation and server repository. Any adjustments regarding database connections and data processing should be made on the server-side code (src/config/config.js in the server repository) rather than the client-side code.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Step 4: Run the Application
+After configuring the database, run the application with the following command:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm start
+```
 
-### `npm run eject`
+The application will run at `http://localhost:3000`. Open your web browser and access this address to use the Chronos Attendance System.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Additional Notes
+Ensure that your MySQL server is running and accessible by this application. If you encounter any difficulties or issues, please refer to the MySQL documentation or check this project's documentation for further assistance.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Feel free to ask questions or report issues via [Issues](https://github.com/gifariarsal/chronos_client/issues) if you need additional help.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Enjoy using the Chronos Attendance System Web Application!

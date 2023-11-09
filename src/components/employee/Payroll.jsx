@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 import {
   Box,
   Heading,
@@ -11,30 +10,31 @@ import {
   Th,
   Td,
   Flex,
-  Spinner,
-  Alert,
-  AlertIcon,
   Button,
   Select,
+  Text,
+  Icon,
 } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import { TbReportOff } from "react-icons/tb";
+const URL_API = process.env.REACT_APP_API_BASE_URL;
 
 function SalaryByUserID() {
-  const { userID } = useParams();
   const [salaryRecords, setSalaryRecords] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [filered, setFilered] = useState(false);
   const [error, setError] = useState(null);
-  const [isDataFetched, setIsDataFetched] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
+
+  const { user } = useSelector((state) => state.AuthReducer);
+  const userID = user.id;
 
   const fetchSalaryRecords = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/employee/salary/${userID}`
-      );
+      const response = await axios.get(`${URL_API}/salary/${userID}`);
       setSalaryRecords(response.data.salaryRecords);
-      setIsDataFetched(true);
     } catch (error) {
       setError(error.message);
     }
@@ -44,12 +44,10 @@ function SalaryByUserID() {
   const calculateSalary = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/employee/salary`,
-        { userID }
-      );
+      await axios.post(`${URL_API}/salary`, {
+        userID,
+      });
       fetchSalaryRecords();
-      console.log(response.data.message);
     } catch (error) {
       setError(error.message);
     }
@@ -61,10 +59,10 @@ function SalaryByUserID() {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/employee/salary/${userID}?month=${selectedMonth}&year=${selectedYear}`
+          `${URL_API}/salary/${userID}?month=${selectedMonth}&year=${selectedYear}`
         );
         setSalaryRecords(response.data.salaryRecords);
-        setIsDataFetched(true);
+        setFilered(true);
       } catch (error) {
         setError(error.message);
       }
@@ -76,9 +74,9 @@ function SalaryByUserID() {
 
   return (
     <Box>
-      <Box w={"full"} bg="white" py={4} px={8}>
+      <Box w={"full"} bg="white" py={4} px={{ base: 4, md: 12 }}>
         <Heading size={"lg"} mb={8}>
-          Salary Reports
+          Payroll Reports
         </Heading>
         <Flex justifyContent="center" mb={4}>
           <Button
@@ -134,40 +132,59 @@ function SalaryByUserID() {
           </Button>
         </Flex>
         {isLoading ? (
-          <Flex justifyContent="center" alignItems="center" height="300px">
-            <Spinner size="xl" />
-          </Flex>
-        ) : (
           <Box>
-            {error ? (
-              <Alert status="error" mb={4}>
-                <AlertIcon />
-                Error: {error}
-              </Alert>
-            ) : (
-              isDataFetched && (
-                <Table variant="striped" colorScheme="orange">
-                  <Thead>
-                    <Tr>
-                      <Th>Total Salary</Th>
-                      <Th>Total Deduction</Th>
-                      <Th>Month</Th>
-                      <Th>Year</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {salaryRecords.map((record) => (
-                      <Tr key={record.id}>
-                        <Td>{record.TotalSalary}</Td>
-                        <Td>{record.TotalDeduction}</Td>
-                        <Td>{record.Month}</Td>
-                        <Td>{record.Year}</Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              )
-            )}
+            <Text>Loading...</Text>
+          </Box>
+        ) : (
+          error && (
+            <Box
+              w={"full"}
+              flexDir={"column"}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Icon mt={8} as={TbReportOff} boxSize={12} color={"gray.400"} />
+              <Text mt={2} fontSize={"lg"} fontWeight={"medium"}>
+                No data found
+              </Text>
+            </Box>
+          )
+        )}
+        {salaryRecords && salaryRecords.length > 0 && (
+          <Table variant="striped" colorScheme="blue">
+            <Thead>
+              <Tr>
+                <Th>Total Salary</Th>
+                <Th>Total Deduction</Th>
+                <Th>Month</Th>
+                <Th>Year</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {salaryRecords.map((record) => (
+                <Tr key={record.id}>
+                  <Td>{record.TotalSalary}</Td>
+                  <Td>{record.TotalDeduction}</Td>
+                  <Td>{record.Month}</Td>
+                  <Td>{record.Year}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+        {filered && salaryRecords.length === 0 && (
+          <Box
+            w={"full"}
+            flexDir={"column"}
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
+            <Icon mt={8} as={TbReportOff} boxSize={12} color={"gray.400"} />
+            <Text mt={2} fontSize={"lg"} fontWeight={"medium"}>
+              No data found
+            </Text>
           </Box>
         )}
       </Box>

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import {
   Box,
   Table,
@@ -44,12 +43,11 @@ const EmployeeList = () => {
 
   return (
     <Box flex="1">
-      <Table variant="striped" colorScheme="orange" fontSize={"sm"}>
+      <Table variant="striped" colorScheme="blue" fontSize={"sm"}>
         <Thead>
           <Tr>
             <Th>Full Name</Th>
             <Th>Email</Th>
-            <Th>Username</Th>
             <Th>Shift</Th>
             <Th>Birthday</Th>
             <Th>Day Salary</Th>
@@ -61,7 +59,6 @@ const EmployeeList = () => {
             <Tr key={user.id}>
               <Td>{user.fullName}</Td>
               <Td>{user.email}</Td>
-              <Td>{user.username}</Td>
               <Td>{getRoleName(user.roleID)}</Td>
               <Td>{formatDate(user.birthday)}</Td>
               <Td>{user.daySalary}</Td>

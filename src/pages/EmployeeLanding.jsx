@@ -118,7 +118,7 @@ const EmployeeLanding = () => {
             </Link>
           </VStack>
         </Box>
-        <Box w={"full"} mt={"60px"}>
+        <Box w={"full"} mt={{ base: "12px", md: "60px"}}>
           {renderPage()}
         </Box>
       </Flex>

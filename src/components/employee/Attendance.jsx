@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import jwtDecode from "jwt-decode";
+import moment from "moment";
 import {
   Box,
   Button,
@@ -8,23 +8,27 @@ import {
   Heading,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+const URL_API = process.env.REACT_APP_API_BASE_URL;
 
 const Attendance = () => {
+  const toast = useToast();
   const [clockedIn, setClockedIn] = useState(false);
   const [clockedOut, setClockedOut] = useState(false);
   const [clockInTime, setClockInTime] = useState(null);
   const [clockOutTime, setClockOutTime] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [attendanceHistory, setAttendanceHistory] = useState([]);
-  const [userId, setUserId] = useState("");
   const [isClockInDisabled, setIsClockInDisabled] = useState(false);
-  const [clockInStatus, setClockInStatus] = useState(false); // New state for clock-in status
+  const { user } = useSelector((state) => state.AuthReducer);
+  const userId = user.id;
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000); // Update every second
+    }, 1000);
 
     return () => {
       clearInterval(intervalId);
@@ -32,31 +36,23 @@ const Attendance = () => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      setUserId(decodedToken.id);
-      fetchAttendanceHistory();
-    }
-  }, [userId]);
+    fetchAttendanceHistory();
+  }, []);
 
   useEffect(() => {
-    // Check if clocked in
     const userIsClockedIn = attendanceHistory.some((entry) => !entry.ClockOut);
     setClockedIn(userIsClockedIn);
 
-    // Check if clocked out
     const userIsClockedOut = attendanceHistory.some((entry) => entry.ClockOut);
     setClockedOut(userIsClockedOut);
 
-    // Disable Clock In button if clocked in
     setIsClockInDisabled(userIsClockedIn);
   }, [attendanceHistory]);
 
   const fetchAttendanceHistory = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/employee/attendance-history/${userId}`
+        `${URL_API}/employee/attendance-history/${userId}`
       );
       setAttendanceHistory(response.data.history);
     } catch (error) {
@@ -67,7 +63,7 @@ const Attendance = () => {
   const handleClockIn = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/employee/clock-in",
+        `${URL_API}/employee/clock-in`,
         {
           userID: userId,
         }
@@ -75,20 +71,29 @@ const Attendance = () => {
 
       if (response.status === 200) {
         setClockInTime(new Date());
-        setClockInStatus(true); // Update the clock-in status
-        alert("Clock In Successful");
+        toast({
+          title: "Clock In Successful",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
         fetchAttendanceHistory();
       }
     } catch (error) {
-      alert("Already clocked in");
-      console.error("Error:", error);
+      toast({
+        title: "Clock in failed",
+        description: error?.response?.data?.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   const handleClockOut = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/employee/clock-out",
+        `${URL_API}/employee/clock-out`,
         {
           userID: userId,
         }
@@ -96,58 +101,121 @@ const Attendance = () => {
 
       if (response.status === 200) {
         setClockOutTime(new Date());
-        alert("Clock Out Successful");
+        toast({
+          title: "Clock Out Successful",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
         fetchAttendanceHistory();
       }
     } catch (error) {
-      alert("Clock in first");
+      toast({
+        title: "Clock out failed",
+        description: error?.response?.data?.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
   return (
-    <Box>
-      <Box w={"full"} bg="white" py={4} px={8}>
-        <VStack align="stretch">
-          <Heading size={"lg"} mb={10}>
-            Employee Attendance
-          </Heading>
-          <Heading size={"md"} mb={10}>
-            Current Time: {currentTime.toLocaleTimeString()}
-          </Heading>
-          <Flex w={"full"} justifyContent={"space-between"}>
-            <Button
-              onClick={handleClockIn}
-              disabled={isClockInDisabled}
-              rounded={"lg"}
-              w={{ base: 200, md: 250, lg: 350 }}
-              bg={"#0B162E"}
-              color={"white"}
-              _hover={{ bg: "#253559" }}
-            >
-              Clock In
-            </Button>
-            <Button
-              onClick={handleClockOut}
-              disabled={!isClockInDisabled}
-              rounded={"lg"}
-              w={{ base: 200, md: 250, lg: 350 }}
-              bg={"white"}
-              border={"1px"}
-              borderColor={"#0B162E"}
-              color={"#0B162E"}
-              _hover={{ bg: "gray.100" }}
-            >
-              Clock Out
-            </Button>
-          </Flex>
-          {clockInStatus && clockInTime && (
-            <VStack mt={4} spacing={2}>
-              <Text color="green.500" fontWeight="bold">
-                Clock In Status: Successful
-              </Text>
-              <Text>Clock In Time: {clockInTime.toLocaleString()}</Text>
-            </VStack>
-          )}
-        </VStack>
+    <Box w={"full"} bg="white" py={4} px={{ base: 4, md: 12 }}>
+      <Heading size={"lg"}>Employee Attendance</Heading>
+      <Heading size={"md"} my={4}>
+        Current Time: {currentTime.toLocaleTimeString([], { hour12: false })}
+      </Heading>
+      <Box
+        w={"full"}
+        bg={"white"}
+        mb={10}
+        textAlign={"start"}
+        py={4}
+        px={8}
+        boxShadow={"md"}
+        rounded={"lg"}
+      >
+        <Text fontWeight={"bold"} mb={2}>
+          Employee Data:
+        </Text>
+        <Box
+          display={"flex"}
+          flexDir={{ base: "column", md: "row" }}
+          gap={{ md: 24 }}
+        >
+          <Box>
+            <Text>Name: {user.fullName}</Text>
+            <Text>Email: {user.email}</Text>
+          </Box>
+          <Box>
+            <Text>
+              Shift:{" "}
+              {user.roleID === 2
+                ? "Morning"
+                : user.roleID === 3
+                ? "Night"
+                : "Unknown Shift"}
+            </Text>
+            <Text>
+              Work Schedule:{" "}
+              {user.roleID === 2
+                ? "8:00 - 16:00"
+                : user.roleID === 3
+                ? "16:00 - 24:00"
+                : "Unknown Schedule"}
+            </Text>
+          </Box>
+        </Box>
+      </Box>
+      <Box w={"full"} mb={12}>
+        <Flex w={"full"} justifyContent={"space-between"} mb={12}>
+          <Button
+            onClick={handleClockIn}
+            disabled={isClockInDisabled}
+            rounded={"lg"}
+            w={{ base: 200, md: 250, lg: 350 }}
+            bg={"#0B162E"}
+            color={"white"}
+            _hover={{ bg: "#253559" }}
+          >
+            Clock In
+          </Button>
+          <Button
+            onClick={handleClockOut}
+            disabled={!isClockInDisabled}
+            rounded={"lg"}
+            w={{ base: 200, md: 250, lg: 350 }}
+            bg={"white"}
+            border={"1px"}
+            borderColor={"#0B162E"}
+            color={"#0B162E"}
+            _hover={{ bg: "gray.100" }}
+          >
+            Clock Out
+          </Button>
+        </Flex>
+        {clockInTime && (
+          <VStack mt={4} spacing={2}>
+            <Text color="green.500" fontWeight="bold">
+              Clocked In Successful
+            </Text>
+            <Text>
+              Clock In Time:{" "}
+              {moment(clockInTime).format("DD/MM/YYYY HH:mm:ss")}
+            </Text>
+          </VStack>
+        )}
+        {clockOutTime && (
+          <VStack mt={4} spacing={2}>
+            <Text color="red.500" fontWeight="bold">
+              Clocked Out Successful
+            </Text>
+            <Text>
+              Clock Out Time:{" "}
+              {moment(clockOutTime).format("DD/MM/YYYY HH:mm:ss")}
+            </Text>
+          </VStack>
+        )}
       </Box>
     </Box>
   );

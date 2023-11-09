@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import jwtDecode from "jwt-decode";
 import {
   Box,
   Heading,
@@ -11,24 +10,22 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+const URL_API = process.env.REACT_APP_API_BASE_URL;
 
 const History = () => {
   const [attendanceHistory, setAttendanceHistory] = useState([]);
-  const [userId, setUserId] = useState("");
+  const { user } = useSelector((state) => state.AuthReducer);
+  const userId = user.id;
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      setUserId(decodedToken.id);
       fetchAttendanceHistory();
-    }
-  }, [userId]);
+  }, []);
 
   const fetchAttendanceHistory = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/employee/attendance-history/${userId}`
+        `${URL_API}/employee/attendance-history/${userId}`
       );
       setAttendanceHistory(response.data.history);
     } catch (error) {
@@ -37,11 +34,11 @@ const History = () => {
   };
   return (
     <Box>
-      <Box w={"full"} bg="white" py={4} px={8}>
+      <Box w={"full"} bg="white" py={4} px={{ base: 4, md: 12 }}>
         <Heading size={"lg"} mb={8}>
           Attendance History
         </Heading>
-        <Table variant="striped" colorScheme="orange">
+        <Table variant="striped" colorScheme="blue">
           <Thead>
             <Tr>
               <Th>Clock In</Th>
