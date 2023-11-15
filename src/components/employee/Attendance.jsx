@@ -6,11 +6,13 @@ import {
   Button,
   Flex,
   Heading,
+  Icon,
   Text,
   VStack,
   useToast,
 } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import { IoLogInOutline, IoLogOutOutline } from "react-icons/io5";
 const URL_API = process.env.REACT_APP_API_BASE_URL;
 
 const Attendance = () => {
@@ -178,7 +180,10 @@ const Attendance = () => {
             color={"white"}
             _hover={{ bg: "#253559" }}
           >
-            Clock In
+            <Box display={"flex"} alignItems={"center"} gap={2}>
+              <Icon as={IoLogInOutline} w={5} h={5} />
+              <Text>Clock In</Text>
+            </Box>
           </Button>
           <Button
             onClick={handleClockOut}
@@ -191,7 +196,10 @@ const Attendance = () => {
             color={"#0B162E"}
             _hover={{ bg: "gray.100" }}
           >
-            Clock Out
+            <Box display={"flex"} alignItems={"center"} gap={2}>
+              <Icon as={IoLogOutOutline} w={5} h={5} />
+              <Text>Clock Out</Text>
+            </Box>
           </Button>
         </Flex>
         {clockInTime && (
@@ -200,8 +208,7 @@ const Attendance = () => {
               Clocked In Successful
             </Text>
             <Text>
-              Clock In Time:{" "}
-              {moment(clockInTime).format("DD/MM/YYYY HH:mm:ss")}
+              Clock In Time: {moment(clockInTime).format("DD/MM/YYYY HH:mm:ss")}
             </Text>
           </VStack>
         )}

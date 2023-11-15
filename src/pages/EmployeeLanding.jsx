@@ -1,10 +1,16 @@
-import { Box, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, Stack } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Attendance from '../components/employee/Attendance';
 import Payroll from '../components/employee/Payroll';
 import History from '../components/employee/History';
+import {
+  IoAlarmOutline,
+  IoDocumentTextOutline,
+  IoFileTrayFullOutline,
+} from "react-icons/io5";
+import MenuDashboard from '../components/employee/MenuDashboard';
 
 function withAuth(Component) {
   return function WrappedComponent(props) {
@@ -45,80 +51,37 @@ const EmployeeLanding = () => {
       <Navbar />
       <Flex flexDir={{ base: "column", md: "row" }}>
         <Box
-          w={{ base: "100%", md: "26%" }}
+          pos={"fixed"}
+          zIndex={10}
+          w={{ base: "100%", md: "280px" }}
           bg={"#0B162E"}
           color="white"
-          minH={{ base:"fit-content", lg:"100vh"}}
+          minH={{ md: "100vh" }}
           mt={"60px"}
         >
-          <VStack spacing="2" align="stretch">
-            <Box w={"full"} bg={"#FCA311"} textAlign={"center"}>
-              <Text
-                fontSize={{ base: "2xl", md: "18" }}
-                fontWeight="bold"
-                p="4"
-                color={"black"}
-              >
-                Employee Dashboard
-              </Text>
-            </Box>
-            <Link as={"button"} onClick={() => setActivePage("attendance")}>
-              <Box
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"flex-start"}
-                p={"4"}
-                bg={"#0B162E"}
-                _hover={{ bg: "#253559" }}
-              >
-                <Text
-                  fontSize={{ base: "lg", md: "18" }}
-                  fontWeight="bold"
-                  ml={2}
-                >
-                  Attendance
-                </Text>
-              </Box>
-            </Link>
-            <Link as={"button"} onClick={() => setActivePage("history")}>
-              <Box
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"flex-start"}
-                p={"4"}
-                bg={"#0B162E"}
-                _hover={{ bg: "#253559" }}
-              >
-                <Text
-                  fontSize={{ base: "lg", md: "18" }}
-                  fontWeight="bold"
-                  ml={2}
-                >
-                  History
-                </Text>
-              </Box>
-            </Link>
-            <Link as={"button"} onClick={() => setActivePage("payroll")}>
-              <Box
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"flex-start"}
-                p={"4"}
-                bg={"#0B162E"}
-                _hover={{ bg: "#253559" }}
-              >
-                <Text
-                  fontSize={{ base: "lg", md: "18" }}
-                  fontWeight="bold"
-                  ml={2}
-                >
-                  Payroll Report
-                </Text>
-              </Box>
-            </Link>
-          </VStack>
+          <Stack
+            spacing="2"
+            direction={{ base: "row", md: "column" }}
+            w={"full"}
+          >
+            <MenuDashboard
+              onClick={() => setActivePage("attendance")}
+              icon={IoAlarmOutline}
+              name="Attendance"
+            />
+            <MenuDashboard
+              onClick={() => setActivePage("history")}
+              icon={IoDocumentTextOutline}
+              name="History"
+            />
+            <MenuDashboard
+              onClick={() => setActivePage("payroll")}
+              icon={IoFileTrayFullOutline}
+              name="Payroll Report"
+            />
+          </Stack>
         </Box>
-        <Box w={"full"} mt={{ base: "12px", md: "60px"}}>
+        <Box w={"full"} ml={{ md: "280px" }} mt={{ base: "116px", md: "60px" }}>
           {renderPage()}
         </Box>
       </Flex>
