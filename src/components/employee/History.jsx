@@ -61,7 +61,7 @@ const History = () => {
                       : "Not Clocked Out"}
                   </Td>
                   <Td>Rp {entry.DaySalary}</Td>
-                  <Td>Rp {entry.Deduction}</Td>
+                  <Td>Rp {entry.Deduction ? entry.Deduction : 0}</Td>
                   <Td>{entry.Month}</Td>
                 </Tr>
               ))}
