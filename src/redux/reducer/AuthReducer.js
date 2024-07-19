@@ -37,6 +37,7 @@ export const AuthReducer = createSlice({
     },
     logoutSuccess: (state) => {
       state.login = false;
+      state.user.roleID = "";
     },
   },
 });
@@ -98,9 +99,7 @@ export const logout = (toast, navigate) => {
         duration: 3000,
         isClosable: true,
       });
-      setTimeout(() => {
-        navigate("/");
-      }, 1000)
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

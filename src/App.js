@@ -1,23 +1,55 @@
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
-import AdminLanding from "./pages/AdminLanding";
-import EmployeeLanding from "./pages/EmployeeLanding";
-import UpdateEmployee from "./pages/UpdateEmployee";
 import KeepLogin from "./middleware/KeepLogin";
+import { useSelector } from "react-redux";
+import { AdminLanding, EmployeeLanding, Login, UpdateEmployee } from "./pages";
 
 function App() {
+  const role = useSelector((state) => state.AuthReducer.user.roleID);
+
+  const defaultRoutes = () => {
+    if (role === "") {
+      return (
+        <>
+          <Route path="/" element={<Login />} />
+        </>
+      );
+    }
+    return <Route path="/*" element={<h1>Not Found</h1>} />;
+  };
+
+  const adminRoutes = () => {
+    if (role === 1) {
+      return (
+        <>
+          <Route path="/admin" element={<AdminLanding />} />
+          <Route path="/register/:token" element={<UpdateEmployee />} />
+        </>
+      );
+    }
+    return <Route path="/*" element={<h1>Not Found</h1>} />;
+  };
+
+  const employeeRoutes = () => {
+    if (role === 2 || role === 3) {
+      return (
+        <>
+          <Route path="/employee" element={<EmployeeLanding />} />
+        </>
+      );
+    }
+    return <Route path="/*" element={<h1>Not Found</h1>} />;
+  };
+
   return (
-    <div className="App">
+    <>
       <KeepLogin>
         <Routes>
-          <Route path="/" element={<Login />}></Route>
-          <Route path="/admin" element={<AdminLanding />}></Route>
-          <Route path="/employee" element={<EmployeeLanding />}></Route>
-          <Route path="/register/:token" element={<UpdateEmployee />}></Route>
+          {defaultRoutes()}
+          {adminRoutes()}
+          {employeeRoutes()}
         </Routes>
       </KeepLogin>
-    </div>
+    </>
   );
 }
 
